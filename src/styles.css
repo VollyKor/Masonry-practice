@@ -1,7 +1,7 @@
 html {
   box-sizing: border-box;
 }
-
+/* html { overflow-y: scroll; } */
 *,
 *::before,
 *::after {
@@ -16,5 +16,62 @@ body {
   /*
    * CSS image reference example.
    */
-  background-image: url('./images/bg-pattern.png');
 }
+* { box-sizing: border-box; }
+
+/* force scrollbar */
+html { overflow-y: scroll; }
+
+body { 
+  font-family: sans-serif; 
+margin: 0 auto
+}
+
+/* ---- grid ---- */
+
+
+.grid {
+  background: #EEE;
+  width: 1200px;
+}
+
+/* clear fix */
+.grid:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.grid-sizer,
+.grid-item {
+  width: 33.333%;
+}
+
+.grid-item {
+  background: #D26;
+  float: left;
+}
+
+.grid-item img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  display: block;
+  margin: 20px auto;
+}
+
+.gallery {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid-item--width2 { width: 320px; }
+.grid-item--width3 { width: 480px; }
+.grid-item--width4 { width: 640px; }
+
+.grid-item--height2 { height: 200px; }
+.grid-item--height3 { height: 260px; }
+.grid-item--height4 { height: 360px; }

@@ -50,6 +50,8 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "handlebars": "^4.7.6"
+    "handlebars": "^4.7.6",
+    "imagesloaded": "^4.1.4",
+    "masonry-layout": "^4.2.2"
   }
 }
