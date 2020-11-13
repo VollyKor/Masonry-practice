@@ -13,9 +13,10 @@ const options = {
 const msnry = new Masonry(ref, options )
 
 imagesLoaded( ref, () => {
-    console.log('imd loaded');
-    msnry.layout()
-})
+        console.log('imd loaded');
+        msnry.layout()
+    })
+
 
 
 const markup = template()
@@ -30,10 +31,36 @@ const markup = template()
 // const doc = new DOMParser().parseFromString(markup, "text/html")
 // console.log(doc);
 
-let getNodes = str => new DOMParser().parseFromString(str, 'text/html').body.childNodes;
-let nodes = getNodes(markup);
 
 
+const btn = document.querySelector('.append');
+
+// btn.addEventListener('click', function (e) {
+
+    let getNodes = str => new DOMParser().parseFromString(str, 'text/html').body.childNodes;
+    let nodes = getNodes(markup);
+
+btn.addEventListener( 'click', function() {
+  // create new item elements
+  var fragment = document.createDocumentFragment();
+// fragment.append(nodes)
+// console.log(fragment.children);
+const arr = Array.from(nodes)
+fragment.append(arr)
+console.log(fragment.children);
+
+
+  // add and lay out newly appended elements
+      imagesLoaded( ref, () => {
+        console.log('imd loaded');
+        ref.insertAdjacentHTML('beforeend', markup)
+        // msnry.appended(nodes)
+        msnry.appended( arr );
+        msnry.appended(fragment)
+        // msnry.layout()
+
+});
+})
 // var list = document.querySelector('#list')
 // var fruits = ['Apple', 'Orange', 'Banana', 'Melon']
 
