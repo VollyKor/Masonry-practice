@@ -1,6 +1,8 @@
 import './styles.css';
 import Masonry from 'masonry-layout'
 import imagesLoaded from 'imagesloaded'
+// import Handlebars, { template } from 'handlebars' 
+import template from "./template/template.hbs"
 
 const ref = document.querySelector(".grid");
 const options = {
@@ -14,6 +16,39 @@ imagesLoaded( ref, () => {
     console.log('imd loaded');
     msnry.layout()
 })
+
+
+const markup = template()
+// console.dir(markup);
+// const fragment = new DocumentFragment()
+// fragment.append(markup)
+// console.log(fragment.children.item(0));
+// Array.from(fragment)
+// console.log(fragment);
+// // ref.appendChild(fragment)
+
+// const doc = new DOMParser().parseFromString(markup, "text/html")
+// console.log(doc);
+
+let getNodes = str => new DOMParser().parseFromString(str, 'text/html').body.childNodes;
+let nodes = getNodes(markup);
+
+
+// var list = document.querySelector('#list')
+// var fruits = ['Apple', 'Orange', 'Banana', 'Melon']
+
+// var fragment = new DocumentFragment()
+
+// fruits.forEach(function (fruit) {
+//   var li = document.createElement('li')
+//   li.innerHTML = fruit
+//   fragment.appendChild(li)
+// })
+// console.log(fragment);
+
+// list.appendChild(fragment)
+
+
 
 // imagesLoaded( ref ).on( 'progress', function() {
 //     // layout Masonry after each image loads
