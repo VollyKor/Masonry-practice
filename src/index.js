@@ -1,129 +1,128 @@
 import './styles.css';
 import Masonry from 'masonry-layout'
 import imagesLoaded from 'imagesloaded'
-// import Handlebars, { template } from 'handlebars' 
 import template from "./template/template.hbs"
+// Установлены плагины Masonry, Imagesloaded, HandleBars
+// Стили, опции и картинки использованы с примеров
+//  https://codepen.io/desandro/pen/MwJoZQ
+//  https://codepen.io/desandro/pen/nhekz
 
+
+//  Ссылки на элементы 
 const ref = document.querySelector(".grid");
-const options = {
-    itemSelector: '.grid-item',
-    columnWidth: '.grid-sizer',
-    percentPosition: true
-}
-const msnry = new Masonry(ref, options )
+const appendButton = document.querySelector('.append');
 
-imagesLoaded( ref, () => {
-        console.log('imd loaded');
-        msnry.layout()
-    })
-
-
-
+//  Импорт шаблона 
 const markup = template()
-// console.dir(markup);
-// const fragment = new DocumentFragment()
-// fragment.append(markup)
-// console.log(fragment.children.item(0));
-// Array.from(fragment)
-// console.log(fragment);
-// // ref.appendChild(fragment)
-
-// const doc = new DOMParser().parseFromString(markup, "text/html")
-// console.log(doc);
 
 
+//  Инициализация Masonry
+//  ======================
+const options = {
+  itemSelector: '.grid-item',
+  columnWidth: '.grid-sizer',
+  percentPosition: true
+}
+const msnry = new Masonry(ref, options)
 
-const btn = document.querySelector('.append');
-
-// btn.addEventListener('click', function (e) {
-
-    let getNodes = str => new DOMParser().parseFromString(str, 'text/html').body.childNodes;
-    let nodes = getNodes(markup);
-
-btn.addEventListener( 'click', function() {
-  // create new item elements
-  var fragment = document.createDocumentFragment();
-// fragment.append(nodes)
-// console.log(fragment.children);
-const arr = Array.from(nodes)
-fragment.append(arr)
-console.log(fragment.children);
-
-
-  // add and lay out newly appended elements
-      imagesLoaded( ref, () => {
-        console.log('imd loaded');
-        ref.insertAdjacentHTML('beforeend', markup)
-        // msnry.appended(nodes)
-        msnry.appended( arr );
-        msnry.appended(fragment)
-        // msnry.layout()
-
-});
+//  сортировка изображений после их загрузки
+// =================================
+imagesLoaded(ref, () => {
+  console.log('imd loaded');
+  msnry.layout()
 })
-// var list = document.querySelector('#list')
-// var fruits = ['Apple', 'Orange', 'Banana', 'Melon']
 
-// var fragment = new DocumentFragment()
+// функция преобразующая шаблон в массив елементов 
+// Так как из DocumentFragment() не получилось получить какой то список елементов,
+// необходимый для Masonry пришлось искать другой способ   
+// ===============================================
 
-// fruits.forEach(function (fruit) {
-//   var li = document.createElement('li')
-//   li.innerHTML = fruit
-//   fragment.appendChild(li)
-// })
-// console.log(fragment);
 
-// list.appendChild(fragment)
+//  по клику на кнопку добавляем картинки и всю магию
+// ================================
 
 
 
-// imagesLoaded( ref ).on( 'progress', function() {
-//     // layout Masonry after each image loads
-//     msnry.layout();
-//   });
+//  Вариант 1
+// с использованием DocumentFragment()
+// =============================
+
+//  !!! Отличается от функции в варианте 1 
+// в варианте 2 мы используем .children 
+
+const getNodes = str => new DOMParser().parseFromString(str, 'text/html').body.childNodes
+
+appendButton.addEventListener('click', () => {
+
+  //  Создаем список узлоав из шаблона 
+  const nodes = getNodes(markup);
+
+  //  фиксируем высоту документа перед добавлением елементов 
+  const scrollheigth = document.body.scrollHeight
+
+  //  создаем пустой DocumentFragment(), так как
+  //  добавить туда аргументом ни массив, ни объект, ни шаблон, у меня не получилось 
+  const newFragment = new DocumentFragment()
+
+  //   добавляем в DocumentFragment() елементы из списка
+
+  //  Вариант 1 
+  // nodes.forEach(e => {
+  //   newFragment.appendChild(e)
+  // })
+
+  //  Вариант 2
+  newFragment.append(...nodes)
+
+  // создаем объект в формате Node-list, для метода msnry.appended(nodelist)
+  // бонус в том что можно дабавить елементы по селекторам css
+  const nodeList = newFragment.querySelectorAll(".grid-item")
+  console.log(nodeList);
+  //  добавляем в DOM все елементы за 1 операцию
+  ref.appendChild(newFragment);
+
+  // когда все елементы загрузились заново сортируем картинки 
+  imagesLoaded(ref, () => {
+    msnry.appended(nodeList);
+
+    // Скролим екран до новых елементов
+    window.scrollTo({
+      top: scrollheigth,
+      behavior: "smooth"
+    })
+  })
+});
 
 
-  // external js: masonry.pkgd.js, imagesloaded.pkgd.js
+//  Вариант 2 
+// Без использования DocumentFragment()
+//  Намного меньше кода
+// ==============================
 
-// init Masonry
-// var grid = document.querySelector('.grid');
-// const btn = document.querySelector('.append');
+//  !!! Отличается от функции в варианте 1 
+// в варианте 1 мы используем .childNodes, 
+  // const getNodes = str => new DOMParser().parseFromString(str, 'text/html').body.children
 
-// var msnry = new Masonry( grid, {
-//   itemSelector: '.grid-item',
-//   columnWidth: '.grid-sizer',
-//   percentPosition: true
+
+  // appendButton.addEventListener('click', () => {
+
+  //     //  Создаем список узлоав из шаблона 
+  //     const nodes = getNodes(markup);
+  //     //  преобразовываем в массив, который подходит для метода msnry.appended(arr);
+  //     const arr = Array.from(nodes) 
+
+  //     // добавляем елементы в DOM 
+  //     ref.append(...nodes);
+
+  //     // Фиксируем высоту экрана до появления новых елементов
+  //     const scrollheigth = document.body.scrollHeight
+
+  //     //  когда картинки загрузились, сортируем их, скролим до начала новых
+  //   imagesLoaded(ref , () => {
+  //     msnry.appended(arr);
+  //     window.scrollTo({
+  //       top: scrollheigth,
+  //       behavior: "smooth"
+  //     })
+  //   })
 // });
-
-// imagesLoaded( grid ).on( 'progress', function() {
-//   // layout Masonry after each image loads
-//   msnry.layout();
-// });
-
-
-// var appendButton = document.querySelector('.append');
-// appendButton.addEventListener( 'click', function() {
-// //   create new item elements
-//   var elems = [];
-//   var fragment = document.createDocumentFragment();
-//   for ( var i = 0; i < 3; i++ ) {
-//     var elem = getItemElement();
-//     fragment.appendChild( elem );
-//     elems.push( elem );
-//   }
-//   // append elements to container
-//   ref.appendChild( fragment );
-//   // add and lay out newly appended elements
-//   msnry.appended( elems );
-// });
-
-// create <div class="grid-item"></div>
-// function getItemElement() {
-//     var elem = document.createElement('div');
-//     var wRand = Math.random();
-//     var hRand = Math.random();
-//     var widthClass = wRand > 0.8 ? 'grid-item--width3' : wRand > 0.6 ? 'grid-item--width2' : '';
-//     var heightClass = hRand > 0.85 ? 'grid-item--height4' : hRand > 0.6 ? 'grid-item--height3' : hRand > 0.35 ? 'grid-item--height2' : '';
-//     elem.className = 'grid-item ' + widthClass + ' ' + heightClass;
-//     return elem;
-//   }
